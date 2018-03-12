@@ -13,5 +13,5 @@ bool Image_Feature::GetPosFeature(int pos) {
 }
 
 vector<bool> Image_Feature::GetFeatureMap() {
-
+    return feature_map;
 }
