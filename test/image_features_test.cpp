@@ -12,7 +12,7 @@
 // Test cases will also cover both getters
 TEST_CASE("Valid string test") {
     auto *test_feature = new Image_Feature;
-    std::string test_string = "++++++++++########++++++++++\n"
+    string test_string = "++++++++++########++++++++++\n"
                               "++++++++++########++++++++++\n"
                               "++++++++++########++++++++++\n"
                               "++++++++++########++++++++++\n"
@@ -27,7 +27,7 @@ TEST_CASE("Valid string test") {
 
 TEST_CASE("Valid string background value replacement") {
     auto *test_feature = new Image_Feature;
-    std::string test_string = "++++++++++########++++++++++\n"
+    string test_string = "++++++++++########++++++++++\n"
                               "++++++++++########++++++++++\n"
                               "++++++++++########++++++++++\n"
                               "++++++++++########++++++++++\n"
@@ -42,7 +42,7 @@ TEST_CASE("Valid string background value replacement") {
 
 TEST_CASE("Valid string all background") {
     auto *test_feature = new Image_Feature;
-    std::string test_string = "++++++++++++++++++++++++++++\n"
+    string test_string = "++++++++++++++++++++++++++++\n"
                               "++++++++++++++++++++++++++++\n"
                               "++++++++++++++++++++++++++++\n"
                               "++++++++++++++++++++++++++++\n"
@@ -57,7 +57,7 @@ TEST_CASE("Valid string all background") {
 
 TEST_CASE("Valid string foreground value replacement") {
     auto *test_feature = new Image_Feature;
-    std::string test_string = "++++++++++########++++++++++\n"
+    string test_string = "++++++++++########++++++++++\n"
                               "++++++++++########++++++++++\n"
                               "++++++++++########++++++++++\n"
                               "++++++++++########++++++++++\n"
@@ -75,7 +75,7 @@ TEST_CASE("Valid string foreground value replacement") {
 
 TEST_CASE("Valid string empty background") {
     auto *test_feature = new Image_Feature;
-    std::string test_string = "          ########          \n"
+    string test_string = "          ########          \n"
                               "          ########          \n"
                               "          ########          \n"
                               "          ########          \n"
@@ -91,7 +91,7 @@ TEST_CASE("Valid string empty background") {
 
 TEST_CASE("Empty string") {
     auto *test_feature = new Image_Feature;
-    std::string test_string = "";
+    string test_string = "";
     test_feature->CreateFeatureMap(test_string);
 
     CHECK(test_feature->GetFeatureMap().size() == 0);

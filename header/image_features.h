@@ -16,7 +16,7 @@ public:
      * Method to generate vector of features from file input.
      * @param file_data string read from file
      */
-    void CreateFeatureMap(std::string file_data);
+    void CreateFeatureMap(string file_data);
 
     /**
      * Method to get specific feature.
