@@ -34,3 +34,11 @@ void Model::TrainProb(vector<Image_Feature> images) {
 void Model::TrainClassProb(vector<int> descriptions) {
 
 }
+
+map<int, vector<double>> Model::GetTrainProb() {
+    return train_prob;
+}
+
+map<int, double> Model::GetClassProb() {
+    return train_class_prob;
+}

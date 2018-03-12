@@ -9,6 +9,8 @@
 #ifndef NAIVEBAYES_RGYCHIU_MODEL_H
 #define NAIVEBAYES_RGYCHIU_MODEL_H
 
+using namespace std;
+
 class Model {
 public:
     /**
@@ -32,12 +34,15 @@ public:
      * @return confusion matrix
      */
     vector<double> TestModel(vector<Image_Feature> test_images);
+
+    map<int, vector<double>> GetTrainProb();
+    map<int, double> GetClassProb();
 private:
     Data_Aggregator training_data;
     Data_Aggregator test_data;
-    std::map<int, vector<double>> train_prob;
-    std::map<int, double> train_class_prob;
-    std::map<int, double> probabilities;
+    map<int, vector<double>> train_prob;
+    map<int, double> train_class_prob;
+    map<int, double> probabilities;
     const int kKValue;
 
     /**
