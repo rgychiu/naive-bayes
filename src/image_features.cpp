@@ -5,12 +5,12 @@
 #include "../header/image_features.h"
 
 void Image_Feature::CreateFeatureMap(string file_data) {
-    for (reverse_iterator reverse_string = file_data.rbegin(); reverse_string != file_data.rend(); ++reverse_string) {
-        feature_map.push_back(*reverse_string == "#");
+    for (const auto &value : file_data) {
+        feature_map.push_back(value == '#' || value == '+');
     }
 }
 
-bool Image_Feature::GetPosFeature(int pos) {
+bool Image_Feature::GetPosFeature(u_int pos) {
     return feature_map.at(pos);
 }
 

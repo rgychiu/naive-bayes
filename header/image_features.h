@@ -23,7 +23,7 @@ public:
      * @param pos position to retrieve feature
      * @return feature value at specified position
      */
-    bool GetPosFeature(int pos);
+    bool GetPosFeature(u_int pos);
 
     /**
      * Method that returns the entire feature mapping.
