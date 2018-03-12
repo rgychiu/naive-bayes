@@ -8,18 +8,19 @@
 #ifndef NAIVEBAYES_RGYCHIU_DATAMANAGER_H
 #define NAIVEBAYES_RGYCHIU_DATAMANAGER_H
 
+using namespace std;
 
-class Data_Manager {
+class Data_Aggregator {
 public:
     /**
      * Method to read images from file.
      */
-    void ReadFromImageFile();
+    void ReadFromImageFile(string file_path);
 
     /**
      * Method to read image descriptions from file.
      */
-    void ReadFromLabelFile();
+    void ReadFromLabelFile(string file_path);
 
     /**
      * Method to get all images.

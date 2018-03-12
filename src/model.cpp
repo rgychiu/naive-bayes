@@ -15,10 +15,22 @@ void Model::LoadFromFile() {
 
 }
 
+void Model::TrainModel() {
+
+}
+
 vector<double> Model::TestModel(vector<Image_Feature> test_images) {
 
 }
 
 int Model::Classify(Image_Feature image) {
+
+}
+
+void Model::TrainProb(vector<Image_Feature> images) {
+
+}
+
+void Model::TrainClassProb(vector<int> descriptions) {
 
 }

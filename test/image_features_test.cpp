@@ -6,7 +6,7 @@
 
 #include <string>
 
-#include CATCH_CONFIG_MAIN
+#define CATCH_CONFIG_MAIN
 
 // ---------------------------------------- Test feature map creation --------------------------------------------
 // Test cases will also cover both getters
@@ -23,36 +23,39 @@ TEST_CASE("Valid string test") {
     test_feature->CreateFeatureMap(test_string);
 
     CHECK(test_feature->GetFeatureMap().size() == 224);
+    delete test_feature;
 }
 
 TEST_CASE("Valid string background value replacement") {
     auto *test_feature = new Image_Feature;
-    string test_string = "++++++++++########++++++++++\n"
-                         "++++++++++########++++++++++\n"
-                         "++++++++++########++++++++++\n"
-                         "++++++++++########++++++++++\n"
-                         "++++++++++########++++++++++\n"
-                         "++++++++++########++++++++++\n"
-                         "++++++++++########++++++++++\n"
-                         "++++++++++########++++++++++\n";
+    string test_string = "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n";
     test_feature->CreateFeatureMap(test_string);
 
     CHECK(!test_feature->GetPosFeature(0));
+    delete test_feature;
 }
 
 TEST_CASE("Valid string all background") {
     auto *test_feature = new Image_Feature;
-    string test_string = "++++++++++++++++++++++++++++\n"
-                         "++++++++++++++++++++++++++++\n"
-                         "++++++++++++++++++++++++++++\n"
-                         "++++++++++++++++++++++++++++\n"
-                         "++++++++++++++++++++++++++++\n"
-                         "++++++++++++++++++++++++++++\n"
-                         "++++++++++++++++++++++++++++\n"
-                         "++++++++++++++++++++++++++++\n";
+    string test_string = "                            \n"
+                         "                            \n"
+                         "                            \n"
+                         "                            \n"
+                         "                            \n"
+                         "                            \n"
+                         "                            \n"
+                         "                            \n";
     test_feature->CreateFeatureMap(test_string);
 
     CHECK(test_feature->GetFeatureMap().size() == 224);
+    delete test_feature;
 }
 
 TEST_CASE("Valid string foreground value replacement") {
@@ -67,26 +70,11 @@ TEST_CASE("Valid string foreground value replacement") {
                          "++++++++++########++++++++++\n";
     test_feature->CreateFeatureMap(test_string);
 
-    CHECK(test_feature->GetPosFeature(10));
+    CHECK(test_feature->GetPosFeature(1));
     CHECK(test_feature->GetPosFeature(11));
     CHECK(test_feature->GetPosFeature(38));
     CHECK(test_feature->GetPosFeature(39));
-}
-
-TEST_CASE("Valid string empty background") {
-    auto *test_feature = new Image_Feature;
-    string test_string = "          ########          \n"
-                         "          ########          \n"
-                         "          ########          \n"
-                         "          ########          \n"
-                         "          ########          \n"
-                         "          ########          \n"
-                         "          ########          \n"
-                         "          ########          \n";
-    test_feature->CreateFeatureMap(test_string);
-
-    CHECK(!test_feature->GetPosFeature(0));
-    CHECK(!test_feature->GetPosFeature(28));
+    delete test_feature;
 }
 
 TEST_CASE("Empty string") {
@@ -95,4 +83,5 @@ TEST_CASE("Empty string") {
     test_feature->CreateFeatureMap(test_string);
 
     CHECK(test_feature->GetFeatureMap().empty());
+    delete test_feature;
 }

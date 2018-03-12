@@ -1,7 +1,7 @@
 //
 // Created by Roy Chiu on 3/11/18.
 //
-#include "data_manager.h"
+#include "data_aggregator.h"
 
 #include <iostream>
 #include <map>
@@ -33,8 +33,10 @@ public:
      */
     vector<double> TestModel(vector<Image_Feature> test_images);
 private:
-    Data_Manager training_stats;
-    Data_Manager test_stats;
+    Data_Aggregator training_data;
+    Data_Aggregator test_data;
+    std::map<int, vector<double>> train_prob;
+    std::map<int, double> train_class_prob;
     std::map<int, double> probabilities;
     const int kKValue;
 
@@ -44,6 +46,18 @@ private:
      * @return resulting number from classification
      */
     int Classify(Image_Feature image);
+
+    /**
+     * Helper method to generate training probabilities based on training set.
+     * @param images training set of images
+     */
+    void TrainProb(vector<Image_Feature> images);
+
+    /**
+     * Helper method to estimate priors.
+     * @param descriptions training set of priors
+     */
+    void TrainClassProb(vector<int> descriptions);
 };
 
 
