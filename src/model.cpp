@@ -74,7 +74,7 @@ vector<vector<double>> Model::TestModel(const string &test_image_path, const str
     vector<Image_Feature> images = test_data.GetImages();
     vector<int> descriptions = test_data.GetLabels();
     for (u_int label_idx = 0; label_idx < descriptions.size(); label_idx++) {
-        confusion_matrix.at(descriptions.at(label_idx)).at(Classify(CalculateProb(images.at(label_idx))))++;
+        confusion_matrix.at(descriptions.at(label_idx)).at(Classify(CalculatePostProb(images.at(label_idx))))++;
     }
 
     for (u_int class_idx = 0; class_idx < confusion_matrix.size(); class_idx++) {
@@ -97,36 +97,46 @@ vector<string> Model::ProbabilityExtremes(u_int number) {
     u_int highest_idx = 0;
     u_int lowest_idx = 0;
     double running_high = 0;
-    double running_low = 1;
+    double running_low = numeric_limits<double>::max();
 
     vector<int> descriptions = test_data.GetLabels();
     vector<Image_Feature> images = test_data.GetImages();
     for (u_int desc_idx = 0; desc_idx < descriptions.size(); desc_idx++) {
         if (descriptions.at(desc_idx) == number) {
-            vector<double> probabilities = CalculateProb(images.at(desc_idx));
+            map<int, double> post_probability = CalculatePostProb(images.at(desc_idx));
 
-            if (probabilities.at(number) > running_high) {
-                running_high = probabilities.at(number);
+            if (-post_probability.at(number) > running_high) {
+                running_high = post_probability.at(number);
                 highest_idx = desc_idx;
             }
 
-            if (probabilities.at(number) < running_low) {
-                running_low = probabilities.at(number);
+            if (-post_probability.at(number) < running_low) {
+                running_low = post_probability.at(number);
                 lowest_idx = desc_idx;
             }
         }
     }
 
     vector<string> edge_images;
+    // Highest value is the smallest probability after negating and vice versa - highest is worse, smaller is better
     edge_images.push_back(images.at(highest_idx).GetImage());
     edge_images.push_back(images.at(lowest_idx).GetImage());
     return edge_images;
 }
 
-int Model::Classify(vector<double> prob_dist) {
-    //Code for max element finding derived from:
-    //https://stackoverflow.com/questions/2953491/finding-the-position-of-the-max-element
-    return distance(prob_dist.begin(), max_element(prob_dist.begin(), prob_dist.end()));
+int Model::Classify(map<int, double> prob_dist) {
+    // Sort one element of the hashmap using lambda functions to get highest probability and return key
+    vector<pair<int, double>> num_prob;
+    for (const auto &mappings : prob_dist) {
+        num_prob.emplace_back(mappings);
+    }
+
+    partial_sort(num_prob.begin(), num_prob.begin() + 1, num_prob.end(),
+                 [](const std::pair<int, double> &prev, const std::pair<int, double> &curr) {
+                    return prev.second > curr.second;
+                 });
+
+    return num_prob.at(0).first;
 }
 
 void Model::TrainProb(vector<Image_Feature> images) {
@@ -167,7 +177,7 @@ void Model::TrainProb(vector<Image_Feature> images) {
 void Model::TrainClassProb(vector<int> descriptions) {
     // Count number of occurrences for each class and divide by total examples
     for (int num = 0; num < 10; num++) {
-        int occur_count = 0;
+        double occur_count = 0;
         for (const auto &label : descriptions) {
             if (label == num) {
                 occur_count++;
@@ -178,22 +188,23 @@ void Model::TrainClassProb(vector<int> descriptions) {
     }
 }
 
-vector<double> Model::CalculateProb(Image_Feature image) {
-    // Initialize vector with 10 elements as numbers, each with probability of class to start multiplying probability
-    vector<double> running_prob(10, 1);
-    for (const auto &class_prob : train_class_prob) {
-        running_prob.at(class_prob.first) *= class_prob.second;
+map<int, double> Model::CalculatePostProb(Image_Feature image) {
+    map <int, double> post_probabilities;
+
+    // Initialize all values to respective class probabilities
+    for (int i = 0; i < 10; i++) {
+        post_probabilities[i] += log(train_class_prob.at(i));
     }
 
     for (u_int feature_idx = 0; feature_idx < image.GetFeatureMap().size(); feature_idx++) {
         if (image.GetPosFeature(feature_idx)) {
             for (const auto &class_feature_prob : train_feature_prob) {
-                running_prob.at(class_feature_prob.first) += log(class_feature_prob.second.at(feature_idx));
+                post_probabilities.at(class_feature_prob.first) += log(class_feature_prob.second.at(feature_idx));
             }
         }
     }
 
-    return running_prob;
+    return post_probabilities;
 }
 
 map<int, vector<double>> Model::GetTrainProb() {

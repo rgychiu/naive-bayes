@@ -59,17 +59,17 @@ private:
 
     /**
      * Helper method to classify single image.
-     * @param prob_dist distribution of probabilities for each position
+     * @param prob_dist posterior probabilities
      * @return resulting number from classification
      */
-    int Classify(vector<double> prob_dist);
+    int Classify(map<int, double> prob_dist);
 
     /**
      * Helper method to calculate probabilities for each position.
      * @param image image read from file
      * @return distribution of probabilities
      */
-    vector<double> CalculateProb(Image_Feature image);
+    map<int, double> CalculatePostProb(Image_Feature image);
 
     /**
      * Helper method to generate training probabilities based on training set.
