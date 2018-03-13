@@ -14,10 +14,16 @@ using namespace std;
 class Image_Feature {
 public:
     /**
-     * Method to generate vector of features from file input and stores image as string.
+     * Method to generate vector of features from file input.
      * @param file_data string read from file
      */
     void CreateFeatureMap(string file_data);
+
+    /**
+     * Method to store string representation of image.
+     * @param file_data string read from file.
+     */
+    void StoreImage(string file_data);
 
     /**
      * Method to get specific feature.

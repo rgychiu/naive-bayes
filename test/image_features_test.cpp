@@ -85,7 +85,6 @@ TEST_CASE("Empty string") {
 }
 
 // ------------------------------------------ Test image to string ----------------------------------------------
-// Function works alongside creating map
 TEST_CASE("Valid image return foreground") {
     auto *test_feature = new Image_Feature;
     string test_string = "++++++++++########++++++++++\n"
@@ -96,7 +95,7 @@ TEST_CASE("Valid image return foreground") {
                          "++++++++++########++++++++++\n"
                          "++++++++++########++++++++++\n"
                          "++++++++++########++++++++++\n";
-    test_feature->CreateFeatureMap(test_string);
+    test_feature->StoreImage(test_string);
 
     CHECK(test_feature->GetImage() == test_string);
     delete test_feature;
@@ -112,7 +111,7 @@ TEST_CASE("Valid image return whitespace preservation") {
                          "          ########          \n"
                          "          ########          \n"
                          "          ########          \n";
-    test_feature->CreateFeatureMap(test_string);
+    test_feature->StoreImage(test_string);
 
     CHECK(test_feature->GetImage() == test_string);
     delete test_feature;
@@ -128,7 +127,16 @@ TEST_CASE("Valid image read all background") {
                          "                            \n"
                          "                            \n"
                          "                            \n";
-    test_feature->CreateFeatureMap(test_string);
+    test_feature->StoreImage(test_string);
+
+    CHECK(test_feature->GetImage() == test_string);
+    delete test_feature;
+}
+
+TEST_CASE("Valid image read single line") {
+    auto *test_feature = new Image_Feature;
+    string test_string = "                            \n                            \n";
+    test_feature->StoreImage(test_string);
 
     CHECK(test_feature->GetImage() == test_string);
     delete test_feature;
@@ -137,7 +145,7 @@ TEST_CASE("Valid image read all background") {
 TEST_CASE("Empty image") {
     auto *test_feature = new Image_Feature;
     string test_string;
-    test_feature->CreateFeatureMap(test_string);
+    test_feature->StoreImage(test_string);
 
     CHECK(test_feature->GetImage().empty());
     delete test_feature;

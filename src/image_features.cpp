@@ -10,6 +10,20 @@ void Image_Feature::CreateFeatureMap(string file_data) {
     }
 }
 
+void Image_Feature::StoreImage(string file_data) {
+    int char_counter = 0;
+    for (const auto &character : file_data) {
+        if (char_counter == 28) {
+            image += '\n';
+            char_counter = 1;
+            image += character;
+        } else {
+            char_counter++;
+            image += character;
+        }
+    }
+}
+
 bool Image_Feature::GetPosFeature(u_int pos) {
     return feature_map.at(pos);
 }

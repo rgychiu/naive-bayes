@@ -35,6 +35,7 @@ void Data_Aggregator::ReadFromImageFile(string file_path) {
     if (line_count == 28) {
         auto *new_image = new Image_Feature;
         new_image->CreateFeatureMap(image_text);
+        new_image->StoreImage(image_text);
         images.push_back(*new_image);
     }
 }
