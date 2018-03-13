@@ -19,7 +19,7 @@ int main() {
     }
 
     for (u_int i = 0; i < 10; i ++) {
-        for (const auto &image_strings : model->HighestProbability(i)) {
+        for (const auto &image_strings : model->ProbabilityExtremes(i)) {
             cout << image_strings << endl << "-------------------------------------------------------" << endl;
         }
     }

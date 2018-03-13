@@ -58,14 +58,14 @@ void Model::LoadFromFile(string file_name) {
     }
 }
 
-void Model::TrainModel(string image_path, string label_path) {
+void Model::TrainModel(const string &image_path, const string &label_path) {
     training_data.ReadFromImageFile(image_path);
     training_data.ReadFromLabelFile(label_path);
     TrainProb(training_data.GetImages());
     TrainClassProb(training_data.GetLabels());
 }
 
-vector<vector<double>> Model::TestModel(string test_image_path, string test_label_path) {
+vector<vector<double>> Model::TestModel(const string &test_image_path, const string &test_label_path) {
     // Initialize 10x10 matrix for confusion matrix
     vector<vector<double>> confusion_matrix(10, vector<double>(10, 0));
     test_data.ReadFromImageFile(test_image_path);
@@ -74,7 +74,7 @@ vector<vector<double>> Model::TestModel(string test_image_path, string test_labe
     vector<Image_Feature> images = test_data.GetImages();
     vector<int> descriptions = test_data.GetLabels();
     for (u_int label_idx = 0; label_idx < descriptions.size(); label_idx++) {
-        confusion_matrix.at(descriptions.at(label_idx)).at(Classify(images.at(label_idx)))++;
+        confusion_matrix.at(descriptions.at(label_idx)).at(Classify(CalculateProb(images.at(label_idx))))++;
     }
 
     for (u_int class_idx = 0; class_idx < confusion_matrix.size(); class_idx++) {
@@ -93,7 +93,7 @@ vector<vector<double>> Model::TestModel(string test_image_path, string test_labe
     return confusion_matrix;
 }
 
-vector<string> Model::HighestProbability(u_int number) {
+vector<string> Model::ProbabilityExtremes(u_int number) {
     u_int highest_idx = 0;
     u_int lowest_idx = 0;
     double running_high = 0;
@@ -103,27 +103,15 @@ vector<string> Model::HighestProbability(u_int number) {
     vector<Image_Feature> images = test_data.GetImages();
     for (u_int desc_idx = 0; desc_idx < descriptions.size(); desc_idx++) {
         if (descriptions.at(desc_idx) == number) {
-            // Initialize vector with 10 elements as numbers, each with probability of class to start multiplying probability
-            vector<double> running_prob(10, 1);
-            for (const auto &class_prob : train_class_prob) {
-                running_prob.at(class_prob.first) *= class_prob.second;
-            }
+            vector<double> probabilities = CalculateProb(images.at(desc_idx));
 
-            for (u_int feature_idx = 0; feature_idx < images.at(desc_idx).GetFeatureMap().size(); feature_idx++) {
-                if (images.at(desc_idx).GetPosFeature(feature_idx)) {
-                    for (const auto &class_feature_prob : train_feature_prob) {
-                        running_prob.at(class_feature_prob.first) += log(class_feature_prob.second.at(feature_idx));
-                    }
-                }
-            }
-
-            if (running_prob.at(number) > running_high) {
-                running_high = running_prob.at(number);
+            if (probabilities.at(number) > running_high) {
+                running_high = probabilities.at(number);
                 highest_idx = desc_idx;
             }
 
-            if (running_prob.at(number) < running_low) {
-                running_low = running_prob.at(number);
+            if (probabilities.at(number) < running_low) {
+                running_low = probabilities.at(number);
                 lowest_idx = desc_idx;
             }
         }
@@ -135,24 +123,10 @@ vector<string> Model::HighestProbability(u_int number) {
     return edge_images;
 }
 
-int Model::Classify(Image_Feature image) {
-    // Initialize vector with 10 elements as numbers, each with probability of class to start multiplying probability
-    vector<double> running_prob(10, 1);
-    for (const auto &class_prob : train_class_prob) {
-        running_prob.at(class_prob.first) *= class_prob.second;
-    }
-
-    for (u_int feature_idx = 0; feature_idx < image.GetFeatureMap().size(); feature_idx++) {
-        if (image.GetPosFeature(feature_idx)) {
-            for (const auto &class_feature_prob : train_feature_prob) {
-                running_prob.at(class_feature_prob.first) += log(class_feature_prob.second.at(feature_idx));
-            }
-        }
-    }
-
+int Model::Classify(vector<double> prob_dist) {
     //Code for max element finding derived from:
     //https://stackoverflow.com/questions/2953491/finding-the-position-of-the-max-element
-    return distance(running_prob.begin(), max_element(running_prob.begin(), running_prob.end()));
+    return distance(prob_dist.begin(), max_element(prob_dist.begin(), prob_dist.end()));
 }
 
 void Model::TrainProb(vector<Image_Feature> images) {
@@ -181,6 +155,7 @@ void Model::TrainProb(vector<Image_Feature> images) {
         }
 
         vector<double> pos_probabilities;
+        pos_probabilities.reserve(784);
         for (const auto &pos_occur : feature_occur_ct) {
             // Calculate probability of true for each position and add to map
             pos_probabilities.push_back((k_value + pos_occur.second) / (2 * k_value + occur_count));
@@ -201,6 +176,24 @@ void Model::TrainClassProb(vector<int> descriptions) {
 
         train_class_prob.insert(make_pair(num, occur_count / descriptions.size()));
     }
+}
+
+vector<double> Model::CalculateProb(Image_Feature image) {
+    // Initialize vector with 10 elements as numbers, each with probability of class to start multiplying probability
+    vector<double> running_prob(10, 1);
+    for (const auto &class_prob : train_class_prob) {
+        running_prob.at(class_prob.first) *= class_prob.second;
+    }
+
+    for (u_int feature_idx = 0; feature_idx < image.GetFeatureMap().size(); feature_idx++) {
+        if (image.GetPosFeature(feature_idx)) {
+            for (const auto &class_feature_prob : train_feature_prob) {
+                running_prob.at(class_feature_prob.first) += log(class_feature_prob.second.at(feature_idx));
+            }
+        }
+    }
+
+    return running_prob;
 }
 
 map<int, vector<double>> Model::GetTrainProb() {

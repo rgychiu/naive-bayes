@@ -30,7 +30,7 @@ public:
      * @param image_path path to file with training images
      * @param label_path path to file with training labels
      */
-    void TrainModel(string image_path, string label_path);
+    void TrainModel(const string &image_path, const string &label_path);
 
     /**
      * Method to classify all test images.
@@ -38,15 +38,15 @@ public:
      * @param test_label_path file with descriptions
      * @return confusion matrix
      */
-    vector<vector<double>> TestModel(string test_image_path, string test_label_path);
+    vector<vector<double>> TestModel(const string &test_image_path, const string &test_label_path);
 
     /**
-     * Method that finds the image with the highest probability for a given class.
+     * Method that finds the images with probability extremes for a given class.
      * No need to test function, finding probabilities same as classify method, except return max value
      * @param number class to find image for
      * @return map of highest and lowest probability in test files
      */
-    vector<string> HighestProbability(u_int number);
+    vector<string> ProbabilityExtremes(u_int number);
 
     map<int, vector<double>> GetTrainProb();
     map<int, double> GetClassProb();
@@ -59,10 +59,17 @@ private:
 
     /**
      * Helper method to classify single image.
-     * @param image image read from file
+     * @param prob_dist distribution of probabilities for each position
      * @return resulting number from classification
      */
-    int Classify(Image_Feature image);
+    int Classify(vector<double> prob_dist);
+
+    /**
+     * Helper method to calculate probabilities for each position.
+     * @param image image read from file
+     * @return distribution of probabilities
+     */
+    vector<double> CalculateProb(Image_Feature image);
 
     /**
      * Helper method to generate training probabilities based on training set.
