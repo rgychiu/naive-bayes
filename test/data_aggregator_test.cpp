@@ -2,9 +2,9 @@
 // Created by Roy Chiu on 3/11/18.
 //
 #include "../header/data_aggregator.h"
-#include "../header/catch.hpp"
 
 #define CATCH_CONFIG_MAIN
+#include "../header/catch.hpp"
 
 // --------------------------------------- Test reading images from file --------------------------------------------
 TEST_CASE("Valid image file read") {

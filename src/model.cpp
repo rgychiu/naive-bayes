@@ -15,14 +15,14 @@ void Model::SaveToFile(string file_name) {
     ofstream output_file;
     output_file.open(file_name);
 
-    // Write probability data to file
+    // Write probability data to file with code 0, followed by key value pair
     for (const auto &key_val : train_feature_prob) {
         for (const auto &probability : key_val.second) {
             output_file << "0 " << to_string(key_val.first) << " " << to_string(probability) << endl;
         }
     }
 
-    // Write class probability data to file
+    // Write class probability data to file with code 1, followed by key value pair
     for (const auto &key_val : train_class_prob) {
         output_file << "1 " << to_string(key_val.first) << " " << to_string(key_val.second) << endl;
     }
@@ -37,6 +37,10 @@ void Model::LoadFromFile(string file_name) {
         return;
     }
 
+    // Reset member variables
+    map<int, vector<double>> pos_probabilities;
+    map<int, double> class_probabilities;
+
     while (!input_file.fail()) {
         int value_code;
         int map_key;
@@ -44,15 +48,20 @@ void Model::LoadFromFile(string file_name) {
         input_file >> value_code >> map_key >> value;
         switch (value_code) {
             case 0:
-                train_feature_prob.at(map_key).push_back(value);
+                pos_probabilities[map_key].push_back(value);
                 break;
             case 1:
-                train_class_prob[map_key] += value;
+                class_probabilities[map_key] += value;
                 break;
             default:
                 break;
         }
     }
+
+    train_feature_prob = pos_probabilities;
+    train_class_prob = class_probabilities;
+
+    input_file.close();
 }
 
 void Model::TrainModel(const string &image_path, const string &label_path) {
@@ -71,9 +80,14 @@ vector<vector<double>> Model::TestModel(const string &test_image_path, const str
     vector<Image_Feature> images = test_data.GetImages();
     vector<int> descriptions = test_data.GetLabels();
     for (u_int label_idx = 0; label_idx < descriptions.size(); label_idx++) {
-        confusion_matrix.at(descriptions.at(label_idx)).at(Classify(CalculatePostProb(images.at(label_idx))))++;
+        // Cast to u_int in this case since all integers are unsigned (> 0)
+        // Normally, casting to u_int would not be a good idea for signed images
+        // Increment respective row that corresponds to the correct number the column that it is classified as
+        confusion_matrix.at((u_int) descriptions.at(label_idx))
+                                                .at((u_int) Classify(CalculatePostProb(images.at(label_idx))))++;
     }
 
+    // Get total occurence of specific class
     for (u_int class_idx = 0; class_idx < confusion_matrix.size(); class_idx++) {
         int total_class_occur = 0;
         for (const auto &label : descriptions) {
@@ -82,6 +96,7 @@ vector<vector<double>> Model::TestModel(const string &test_image_path, const str
             }
         }
 
+        // Calculate percentages of the entire row and classifications
         for (auto &totals : confusion_matrix.at(class_idx)) {
             totals /= total_class_occur;
         }
@@ -98,10 +113,13 @@ vector<string> Model::ProbabilityExtremes(u_int number) {
 
     vector<int> descriptions = test_data.GetLabels();
     vector<Image_Feature> images = test_data.GetImages();
+
+    // Loop through labels and get probability for each image that is the same number
     for (u_int desc_idx = 0; desc_idx < descriptions.size(); desc_idx++) {
         if (descriptions.at(desc_idx) == number) {
             map<int, double> post_probability = CalculatePostProb(images.at(desc_idx));
 
+            // Determine if the image is the highest or lowest probability for the class
             if (-post_probability.at(number) > running_high) {
                 running_high = post_probability.at(number);
                 highest_idx = desc_idx;
@@ -162,7 +180,7 @@ void Model::TrainProb(vector<Image_Feature> images) {
         }
 
         vector<double> pos_probabilities;
-        pos_probabilities.reserve(784);
+        pos_probabilities.reserve(Image_Feature::kFeature_Size);
         for (const auto &pos_occur : feature_occur_ct) {
             // Calculate probability of true for each position and add to map
             pos_probabilities.push_back((k_value + pos_occur.second) / (2 * k_value + occur_count));
@@ -193,6 +211,7 @@ map<int, double> Model::CalculatePostProb(Image_Feature image) {
         post_probabilities[i] += log(train_class_prob.at(i));
     }
 
+    // Loop through each feature of the image. If true, add to respective classes their probabilities
     for (u_int feature_idx = 0; feature_idx < image.GetFeatureMap().size(); feature_idx++) {
         if (image.GetPosFeature(feature_idx)) {
             for (const auto &class_feature_prob : train_feature_prob) {

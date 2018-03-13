@@ -13,7 +13,7 @@ void Image_Feature::CreateFeatureMap(string file_data) {
 void Image_Feature::StoreImage(string file_data) {
     int char_counter = 0;
     for (const auto &character : file_data) {
-        if (char_counter == 28) {
+        if (char_counter == Image_Feature::kLine_Length) {
             image += '\n';
             char_counter = 1;
             image += character;

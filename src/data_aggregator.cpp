@@ -19,7 +19,7 @@ void Data_Aggregator::ReadFromImageFile(string file_path) {
     string image_text;
     int line_count = 0;
     while (getline(input_file, line)) {
-        if (line_count == 28) {
+        if (line_count == Image_Feature::kLine_Length) {
             auto *new_image = new Image_Feature;
             new_image->CreateFeatureMap(image_text);
             new_image->StoreImage(image_text);
@@ -33,7 +33,7 @@ void Data_Aggregator::ReadFromImageFile(string file_path) {
     }
 
     // Check if last line read was 28th line
-    if (line_count == 28) {
+    if (line_count == Image_Feature::kLine_Length) {
         auto *new_image = new Image_Feature;
         new_image->CreateFeatureMap(image_text);
         new_image->StoreImage(image_text);

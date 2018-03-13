@@ -1,10 +1,10 @@
 //
 // Created by Roy Chiu on 3/11/18.
 //
-#include "../header/catch.hpp"
 #include "../header/model.h"
 
 #define CATCH_CONFIG_MAIN
+#include "../header/catch.hpp"
 
 // ------------------------------------------- Test file read and write ---------------------------------------------
 // Both save and load from file tested simultaneously
@@ -79,5 +79,31 @@ TEST_CASE("Invalid train bad class data") {
     test_model->TrainModel("../data/testsampleimages.txt", "../data/agajkshdkjh.txt");
 
     CHECK(test_model->GetClassProb().empty());
+    delete test_model;
+}
+
+// --------------------------------------------- Test classificiation -----------------------------------------------
+// Confidence in counting -- test small files for confusion matrix placement and calculation
+// Small enough file so that classification will produce expected results
+TEST_CASE("Valid classification") {
+    auto *test_model = new Model;
+    test_model->TrainModel("../data/trainingimages.txt", "../data/traininglabels.txt");
+
+    CHECK(test_model->TestModel("../data/posteriorextreme.txt", "../data/posteriorextremelabels.txt")
+                      .at(10).at(10) == 0.5);
+    delete test_model;
+}
+
+// ------------------------------------------ Test posterior extremes -----------------------------------------------
+// Confidence in double comparison -- test small smiles for correct posterior probabilities
+// Small enough file to produce expected results
+TEST_CASE("Valid extereme comparisons") {
+    auto *test_model = new Model;
+    test_model->TrainModel("../data/trainingimages.txt", "../data/traininglabels.txt");
+    test_model->TestModel("../data/posteriorextreme.txt", "../data/posteriorextremelabels.txt");
+
+    CHECK(test_model->ProbabilityExtremes(9).size() == 2);
+    // Differentiate between the two features
+    CHECK(test_model->ProbabilityExtremes(9).at(0).at(509) == '+');
     delete test_model;
 }

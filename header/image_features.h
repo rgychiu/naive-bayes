@@ -13,6 +13,9 @@ using namespace std;
 
 class Image_Feature {
 public:
+    const static int kLine_Length = 28;
+    const static int kFeature_Size = 784;
+
     /**
      * Method to generate vector of features from file input.
      * @param file_data string read from file

@@ -2,9 +2,9 @@
 // Created by Roy Chiu on 3/11/18.
 //
 #include "../header/image_features.h"
-#include "../header/catch.hpp"
 
 #define CATCH_CONFIG_MAIN
+#include "../header/catch.hpp"
 
 // ---------------------------------------- Test feature map creation --------------------------------------------
 // Test cases will also cover both getters
