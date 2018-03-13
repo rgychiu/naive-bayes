@@ -7,15 +7,15 @@ using namespace std;
 
 // File to read and write to will have all probabilities and confusion matrix
 
-void Model::SaveToFile() {
+void Model::SaveToFile(string file_name) {
 
 }
 
-void Model::LoadFromFile() {
+void Model::LoadFromFile(string file_name) {
 
 }
 
-void Model::TrainModel() {
+void Model::TrainModel(string image_path, string label_path) {
 
 }
 

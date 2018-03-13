@@ -6,6 +6,7 @@
 #include <vector>
 
 #ifndef NAIVEBAYES_RGYCHIU_IMAGE_FEATURES_H
+
 #define NAIVEBAYES_RGYCHIU_IMAGE_FEATURES_H
 
 using namespace std;

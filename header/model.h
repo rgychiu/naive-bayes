@@ -3,10 +3,10 @@
 //
 #include "data_aggregator.h"
 
-#include <iostream>
 #include <map>
 
 #ifndef NAIVEBAYES_RGYCHIU_MODEL_H
+
 #define NAIVEBAYES_RGYCHIU_MODEL_H
 
 using namespace std;
@@ -15,18 +15,22 @@ class Model {
 public:
     /**
      * Method to save model to file.
+     * @param file_name name of file to save to
      */
-    void SaveToFile();
+    void SaveToFile(string file_name);
 
     /**
      * Method to load model from file.
+     * @param file_name path of file to load from
      */
-    void LoadFromFile();
+    void LoadFromFile(string file_name);
 
     /**
      * Method that trains the model from data provided.
+     * @param image_path path to file with training images
+     * @param label_path path to file with training labels
      */
-    void TrainModel();
+    void TrainModel(string image_path, string label_path);
 
     /**
      * Method to classify all test images.
@@ -43,7 +47,7 @@ private:
     map<int, vector<double>> train_prob;
     map<int, double> train_class_prob;
     map<int, double> probabilities;
-    const int kKValue;
+    const double kKValue = 0.1;
 
     /**
      * Helper method to classify single image.

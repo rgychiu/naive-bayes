@@ -3,9 +3,8 @@
 //
 #include "image_features.h"
 
-#include <iostream>
-
 #ifndef NAIVEBAYES_RGYCHIU_DATAMANAGER_H
+
 #define NAIVEBAYES_RGYCHIU_DATAMANAGER_H
 
 using namespace std;
