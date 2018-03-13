@@ -4,8 +4,6 @@
 #include "../header/image_features.h"
 #include "../header/catch.hpp"
 
-#include <string>
-
 #define CATCH_CONFIG_MAIN
 
 // ---------------------------------------- Test feature map creation --------------------------------------------
@@ -83,5 +81,64 @@ TEST_CASE("Empty string") {
     test_feature->CreateFeatureMap(test_string);
 
     CHECK(test_feature->GetFeatureMap().empty());
+    delete test_feature;
+}
+
+// ------------------------------------------ Test image to string ----------------------------------------------
+// Function works alongside creating map
+TEST_CASE("Valid image return foreground") {
+    auto *test_feature = new Image_Feature;
+    string test_string = "++++++++++########++++++++++\n"
+                         "++++++++++########++++++++++\n"
+                         "++++++++++########++++++++++\n"
+                         "++++++++++########++++++++++\n"
+                         "++++++++++########++++++++++\n"
+                         "++++++++++########++++++++++\n"
+                         "++++++++++########++++++++++\n"
+                         "++++++++++########++++++++++\n";
+    test_feature->CreateFeatureMap(test_string);
+
+    CHECK(test_feature->GetImage() == test_string);
+    delete test_feature;
+}
+
+TEST_CASE("Valid image return whitespace preservation") {
+    auto *test_feature = new Image_Feature;
+    string test_string = "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n"
+                         "          ########          \n";
+    test_feature->CreateFeatureMap(test_string);
+
+    CHECK(test_feature->GetImage() == test_string);
+    delete test_feature;
+}
+
+TEST_CASE("Valid image read all background") {
+    auto *test_feature = new Image_Feature;
+    string test_string = "                            \n"
+                         "                            \n"
+                         "                            \n"
+                         "                            \n"
+                         "                            \n"
+                         "                            \n"
+                         "                            \n"
+                         "                            \n";
+    test_feature->CreateFeatureMap(test_string);
+
+    CHECK(test_feature->GetImage() == test_string);
+    delete test_feature;
+}
+
+TEST_CASE("Empty image") {
+    auto *test_feature = new Image_Feature;
+    string test_string;
+    test_feature->CreateFeatureMap(test_string);
+
+    CHECK(test_feature->GetImage().empty());
     delete test_feature;
 }
