@@ -34,20 +34,20 @@ public:
 
     /**
      * Method to classify all test images.
-     * @param test_images all images from test file
+     * @param test_image_path file with images to classify
+     * @param test_label_path file with descriptions
      * @return confusion matrix
      */
-    vector<double> TestModel(vector<Image_Feature> test_images);
+    vector<vector<double>> TestModel(string test_image_path, string test_label_path);
 
     map<int, vector<double>> GetTrainProb();
     map<int, double> GetClassProb();
 private:
     Data_Aggregator training_data;
     Data_Aggregator test_data;
-    map<int, vector<double>> train_prob;
+    map<int, vector<double>> train_feature_prob;
     map<int, double> train_class_prob;
-    map<int, double> probabilities;
-    const double kKValue = 0.1;
+    double k_value = 0.1;
 
     /**
      * Helper method to classify single image.

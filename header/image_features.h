@@ -14,7 +14,7 @@ using namespace std;
 class Image_Feature {
 public:
     /**
-     * Method to generate vector of features from file input.
+     * Method to generate vector of features from file input and stores image as string.
      * @param file_data string read from file
      */
     void CreateFeatureMap(string file_data);
@@ -27,12 +27,19 @@ public:
     bool GetPosFeature(u_int pos);
 
     /**
+     * Method to print the instance image.
+     * @return image as string
+     */
+    string GetImage();
+
+    /**
      * Method that returns the entire feature mapping.
      * @return instance feature map
      */
     vector<bool> GetFeatureMap();
 private:
     vector<bool> feature_map;
+    string image;
 };
 
 #endif //NAIVEBAYES_RGYCHIU_IMAGE_FEATURES_H

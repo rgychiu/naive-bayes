@@ -30,6 +30,13 @@ void Data_Aggregator::ReadFromImageFile(string file_path) {
             line_count++;
         }
     }
+
+    // Check if last line read was 28th line
+    if (line_count == 28) {
+        auto *new_image = new Image_Feature;
+        new_image->CreateFeatureMap(image_text);
+        images.push_back(*new_image);
+    }
 }
 
 void Data_Aggregator::ReadFromLabelFile(string file_path) {

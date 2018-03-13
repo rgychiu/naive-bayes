@@ -14,6 +14,10 @@ bool Image_Feature::GetPosFeature(u_int pos) {
     return feature_map.at(pos);
 }
 
+string Image_Feature::GetImage() {
+    return image;
+}
+
 vector<bool> Image_Feature::GetFeatureMap() {
     return feature_map;
 }
