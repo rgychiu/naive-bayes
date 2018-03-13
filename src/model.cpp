@@ -18,16 +18,15 @@ void Model::SaveToFile(string file_name) {
     // Write probability data to file
     for (const auto &key_val : train_feature_prob) {
         for (const auto &probability : key_val.second) {
-            output_file << 0 << to_string(key_val.first) << " " << to_string(probability) << endl;
+            output_file << "0 " << to_string(key_val.first) << " " << to_string(probability) << endl;
         }
     }
 
     // Write class probability data to file
     for (const auto &key_val : train_class_prob) {
-        output_file << 1 << to_string(key_val.first) << " " << to_string(key_val.second) << endl;
+        output_file << "1 " << to_string(key_val.first) << " " << to_string(key_val.second) << endl;
     }
 
-    output_file << 2 << endl << to_string(k_value);
     output_file.close();
 }
 
@@ -45,13 +44,11 @@ void Model::LoadFromFile(string file_name) {
         input_file >> value_code >> map_key >> value;
         switch (value_code) {
             case 0:
-                train_feature_prob[map_key].push_back(value);
+                train_feature_prob.at(map_key).push_back(value);
                 break;
             case 1:
                 train_class_prob[map_key] += value;
                 break;
-            case 2:
-                k_value = map_key;
             default:
                 break;
         }
