@@ -81,5 +81,3 @@ TEST_CASE("Invalid train bad class data") {
     CHECK(test_model->GetClassProb().empty());
     delete test_model;
 }
-
-//Unable to test classification method - based on probabilities and training data

@@ -40,6 +40,14 @@ public:
      */
     vector<vector<double>> TestModel(string test_image_path, string test_label_path);
 
+    /**
+     * Method that finds the image with the highest probability for a given class.
+     * No need to test function, finding probabilities same as classify method, except return max value
+     * @param number class to find image for
+     * @return map of highest and lowest probability in test files
+     */
+    vector<string> HighestProbability(u_int number);
+
     map<int, vector<double>> GetTrainProb();
     map<int, double> GetClassProb();
 private:

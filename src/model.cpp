@@ -68,11 +68,11 @@ void Model::TrainModel(string image_path, string label_path) {
 vector<vector<double>> Model::TestModel(string test_image_path, string test_label_path) {
     // Initialize 10x10 matrix for confusion matrix
     vector<vector<double>> confusion_matrix(10, vector<double>(10, 0));
-    training_data.ReadFromImageFile(test_image_path);
-    training_data.ReadFromLabelFile(test_label_path);
+    test_data.ReadFromImageFile(test_image_path);
+    test_data.ReadFromLabelFile(test_label_path);
 
-    vector<Image_Feature> images = training_data.GetImages();
-    vector<int> descriptions = training_data.GetLabels();
+    vector<Image_Feature> images = test_data.GetImages();
+    vector<int> descriptions = test_data.GetLabels();
     for (u_int label_idx = 0; label_idx < descriptions.size(); label_idx++) {
         confusion_matrix.at(descriptions.at(label_idx)).at(Classify(images.at(label_idx)))++;
     }
@@ -91,6 +91,48 @@ vector<vector<double>> Model::TestModel(string test_image_path, string test_labe
     }
 
     return confusion_matrix;
+}
+
+vector<string> Model::HighestProbability(u_int number) {
+    u_int highest_idx = 0;
+    u_int lowest_idx = 0;
+    double running_high = 0;
+    double running_low = 1;
+
+    vector<int> descriptions = test_data.GetLabels();
+    vector<Image_Feature> images = test_data.GetImages();
+    for (u_int desc_idx = 0; desc_idx < descriptions.size(); desc_idx++) {
+        if (descriptions.at(desc_idx) == number) {
+            // Initialize vector with 10 elements as numbers, each with probability of class to start multiplying probability
+            vector<double> running_prob(10, 1);
+            for (const auto &class_prob : train_class_prob) {
+                running_prob.at(class_prob.first) *= class_prob.second;
+            }
+
+            for (u_int feature_idx = 0; feature_idx < images.at(desc_idx).GetFeatureMap().size(); feature_idx++) {
+                if (images.at(desc_idx).GetPosFeature(feature_idx)) {
+                    for (const auto &class_feature_prob : train_feature_prob) {
+                        running_prob.at(class_feature_prob.first) += log(class_feature_prob.second.at(feature_idx));
+                    }
+                }
+            }
+
+            if (running_prob.at(number) > running_high) {
+                running_high = running_prob.at(number);
+                highest_idx = desc_idx;
+            }
+
+            if (running_prob.at(number) < running_low) {
+                running_low = running_prob.at(number);
+                lowest_idx = desc_idx;
+            }
+        }
+    }
+
+    vector<string> edge_images;
+    edge_images.push_back(images.at(highest_idx).GetImage());
+    edge_images.push_back(images.at(lowest_idx).GetImage());
+    return edge_images;
 }
 
 int Model::Classify(Image_Feature image) {

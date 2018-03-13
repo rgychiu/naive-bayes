@@ -18,5 +18,13 @@ int main() {
         cout << endl;
     }
 
+    for (u_int i = 0; i < 10; i ++) {
+        for (const auto &image_strings : model->HighestProbability(i)) {
+            cout << image_strings << endl << "-------------------------------------------------------" << endl;
+        }
+    }
+
+    delete model;
+
     return 0;
 }
