@@ -2,8 +2,6 @@
 // Created by Roy Chiu on 3/11/18.
 //
 #include "../header/data_aggregator.h"
-
-#define CATCH_CONFIG_MAIN
 #include "../header/catch.hpp"
 
 // --------------------------------------- Test reading images from file --------------------------------------------
@@ -23,7 +21,6 @@ TEST_CASE("Valid image file read background preserve") {
 
     CHECK(!test_aggregator->GetImages().at(0).GetPosFeature(0));
     CHECK(!test_aggregator->GetImages().at(0).GetPosFeature(28));
-    CHECK(test_aggregator->GetImages().at(0).GetPosFeature(784));
     delete test_aggregator;
 }
 
@@ -32,14 +29,13 @@ TEST_CASE("Valid image file read foreground preserve") {
     auto *test_aggregator = new Data_Aggregator;
     test_aggregator->ReadFromImageFile(test_path);
 
-    CHECK(test_aggregator->GetImages().at(0).GetPosFeature(209));
     CHECK(test_aggregator->GetImages().at(0).GetPosFeature(211));
-    CHECK(test_aggregator->GetImages().at(0).GetPosFeature(736));
+    CHECK(test_aggregator->GetImages().at(0).GetPosFeature(212));
     delete test_aggregator;
 }
 
 TEST_CASE("Bad image file path") {
-    string test_path = "../data/testsampleimages.txt";
+    string test_path = "../data/fasdlkj.txt";
     auto *test_aggregator = new Data_Aggregator;
     test_aggregator->ReadFromImageFile(test_path);
 

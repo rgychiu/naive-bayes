@@ -2,8 +2,6 @@
 // Created by Roy Chiu on 3/11/18.
 //
 #include "../header/image_features.h"
-
-#define CATCH_CONFIG_MAIN
 #include "../header/catch.hpp"
 
 // ---------------------------------------- Test feature map creation --------------------------------------------
@@ -20,7 +18,7 @@ TEST_CASE("Valid string test") {
                          "++++++++++########++++++++++\n";
     test_feature->CreateFeatureMap(test_string);
 
-    CHECK(test_feature->GetFeatureMap().size() == 224);
+    CHECK(test_feature->GetFeatureMap().size() == 232);
     delete test_feature;
 }
 
@@ -52,7 +50,7 @@ TEST_CASE("Valid string all background") {
                          "                            \n";
     test_feature->CreateFeatureMap(test_string);
 
-    CHECK(test_feature->GetFeatureMap().size() == 224);
+    CHECK(test_feature->GetFeatureMap().size() == 232);
     delete test_feature;
 }
 
